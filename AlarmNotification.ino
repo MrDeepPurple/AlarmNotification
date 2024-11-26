@@ -2,11 +2,13 @@
 
 #include "Configuration.h"
 #include "Constants.h"
-#include "Tasks.h"
 #include "AlarmNotification.h"
 
 AlarmNotification alarmnotify;
+
 unsigned long timer_check_wifi = 0;
+unsigned long timer_check_alarm_state = 0;
+unsigned long timer_check_alarm_msgs = 0;
 
 void setup() {
   // start serial port
@@ -39,11 +41,14 @@ void setup() {
   DEBUG_ln(now);  
 
   alarmnotify.setupAlarmNotificationManager(BOT_TOKEN, ENABLED_ALARM_PIN, TRIGGERED_ALARM_PIN);
-  alarmnotify.sendStartupConfirmationMessage();
 }
 
 void loop()
 {
-  alarmnotify.runStep();
-  TASK(timer_check_wifi, TASK_CHECK_WIFI, verify_and_connect_wifi(CHECK_WIFI_TIMEOUT))
+  TASK(timer_check_alarm_state, TASK_CHECK_ALARM, alarmnotify.checkAlarmState());
+  if(WiFi.status() == WL_CONNECTED)
+  {
+    TASK(timer_check_alarm_msgs, TASK_CHECK_NEW_CHATS, alarmnotify.checkNewRequests())
+  }
+  TASK(timer_check_wifi, TASK_CHECK_WIFI, alarmnotify.checkAndReconnectWifi(CHECK_WIFI_TIMEOUT))
 }

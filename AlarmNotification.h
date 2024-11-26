@@ -3,35 +3,38 @@
 
 #include "Configuration.h"
 #include "Constants.h"
-
-#include <WiFi.h>
-#include <WiFiClientSecure.h>
-#include <UniversalTelegramBot.h>
-
-void IRAM_ATTR detect_alarm_triggered();
+#include "EventBuffer.h"
+#include "NotificationLib.h"
 
 class AlarmNotification
 {
   private:
-    WiFiClientSecure secured_client;
-    UniversalTelegramBot *bot;
 
-    String chatid_str = String(CHAT_ID);
+    int enabled_pin;
+    int alarm_pin;
+
+    bool alarm_msg_latch;
+    bool alarm_en_latch;
+    bool evt_disconnect_latch;
+
     String alarm_en = String(STATUS_ON);
     String alarm_dis = String(STATUS_OFF);
     String alarm_wrn = String(ALERT_MESSAGE);
     String startup_message = String(BOOT_MESSAGE);
+    
+    eventbuffer::EventBuffer *evtbuff;
+    notifications::NotificationLib *notify;
 
-    unsigned long timer_check_alarm = 0, timer_check_chats = 0;
     const unsigned long CHECK_ALARM_PERIOD = TIME_1_SEC, CHECK_CHATS_PERIOD = TIME_1_SEC;
 
-    void handle_alarm_condition();
-    void handle_new_requests();
+    void send_triggered_state();
+    void send_alarm_log();
 
   public:
     void setupAlarmNotificationManager(const String &tg_token, int enable_pin, int alarm_pin);
-    void sendStartupConfirmationMessage();
-    void runStep();
+    void checkNewRequests();
+    void checkAlarmState();
+    void checkAndReconnectWifi(int expiration_ms);
 };
 
 #endif

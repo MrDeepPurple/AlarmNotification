@@ -56,6 +56,16 @@
 #define STATUS_OFF "Centrale disabilitata"
 #define ALERT_MESSAGE "Allarme in corso!"
 #define BOOT_MESSAGE "ESP32 riavviato e operativo"
+#define LOG_CONN_REST "connection restored"
+#define LOG_CONN_LOST "Connection lost"
+#define LOG_STARTED "System started"
+#define LOG_ALARM_ENABLED "Alarm enabled"
+#define LOG_ALARM_DISABLED "Alarm disabled"
+#define LOG_ALARM_TRIGGERED "Alarmed"
+#define LOG_ALARM_BACKTONORMAL "Alarm stopped"
+#define LOG_HEADER "Last events:"
+#define LOG_EMPTY "No event registered"
+#define EVENT_LOG_SIZE 20
 
 //--------------------- Misc config ------------------------//
 /************************************************************

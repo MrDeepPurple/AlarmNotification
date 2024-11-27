@@ -112,6 +112,6 @@ namespace eventbuffer
      */
     bool EventBuffer::iterator::empty()
     {
-        return inst->current_size;
+        return (inst->current_size > 0);
     }
 }
